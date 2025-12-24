@@ -1,0 +1,26 @@
+from injector import inject
+
+from ytpodcast.client.yt_api_client import YtApiClient
+from ytpodcast.client.yt_dl_client import YtDlClient
+from ytpodcast.model.service.video_mapper import VideoMapper
+from ytpodcast.model.service.video_model import VideoModel
+
+
+class VideoService:
+    """Service layer for video data."""
+
+    @inject
+    def __init__(
+        self,
+        yt_api_client: YtApiClient,
+        yt_dl_client: YtDlClient,
+        video_mapper: VideoMapper,
+    ) -> None:
+        self.yt_api_client = yt_api_client
+        self.yt_dl_client = yt_dl_client
+        self.video_mapper = video_mapper
+
+    def get_video(self, video_id: str) -> VideoModel:
+        yt_api_payload = self.yt_api_client.fetch_video(video_id)
+        yt_dl_payload = self.yt_dl_client.fetch_audio_format(video_id)
+        return self.video_mapper.create_from_ytdl(yt_api_payload, yt_dl_payload)
