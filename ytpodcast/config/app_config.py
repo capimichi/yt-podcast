@@ -1,3 +1,5 @@
+"""Module for ytpodcast.config.app_config."""
+
 from dataclasses import dataclass
 
 

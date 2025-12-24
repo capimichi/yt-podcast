@@ -1,4 +1,7 @@
+"""Module for ytpodcast.container.default_container."""
+
 import os
+from typing import Any, TypeVar
 
 from dotenv import load_dotenv
 from injector import Injector
@@ -8,13 +11,17 @@ from ytpodcast.client.yt_dl_client import YtDlClient
 from ytpodcast.config.app_config import AppConfig
 from ytpodcast.controller.channel_controller import ChannelController
 from ytpodcast.controller.video_controller import VideoController
-from ytpodcast.model.controller.channel_response_mapper import ChannelResponseMapper
-from ytpodcast.model.controller.video_response_mapper import VideoResponseMapper
+from ytpodcast.model.controller.get_channel_response_mapper import GetChannelResponseMapper
+from ytpodcast.model.controller.get_video_response_mapper import GetVideoResponseMapper
 from ytpodcast.model.controller.xml_response_mapper import XmlResponseMapper
 from ytpodcast.model.service.channel_mapper import ChannelMapper
 from ytpodcast.model.service.video_mapper import VideoMapper
 from ytpodcast.service.channel_service import ChannelService
 from ytpodcast.service.video_service import VideoService
+
+
+# pylint: disable=too-many-instance-attributes
+T = TypeVar("T")
 
 
 class DefaultContainer:
@@ -24,24 +31,29 @@ class DefaultContainer:
     instance = None
 
     @staticmethod
-    def getInstance():
+    def get_instance():
+        """Return the shared container instance."""
         if DefaultContainer.instance is None:
             DefaultContainer.instance = DefaultContainer()
         return DefaultContainer.instance
 
     def __init__(self) -> None:
+        """Initialize dependency bindings and environment."""
         self.injector = Injector()
         load_dotenv()
         self._init_environment_variables()
         self._init_bindings()
 
-    def get(self, key):
+    def get(self, key: type[T]) -> T:
+        """Resolve a dependency by key from the injector."""
         return self.injector.get(key)
 
-    def get_var(self, key):
+    def get_var(self, key: str) -> Any:
+        """Return a stored environment variable by key."""
         return self.__dict__[key]
 
     def _init_environment_variables(self) -> None:
+        """Load environment variables into container fields."""
         self.app_name = os.environ.get("APP_NAME", "YT Podcast API")
         self.debug = os.environ.get("DEBUG", "false").lower() == "true"
         self.api_host = os.environ.get("API_HOST", "0.0.0.0")
@@ -51,6 +63,7 @@ class DefaultContainer:
         self.ytdl_default_format = os.environ.get("YTDL_DEFAULT_FORMAT", "bestaudio")
 
     def _init_bindings(self) -> None:
+        """Bind configured services, mappers, and clients."""
         app_config = AppConfig(
             app_name=self.app_name,
             debug=self.debug,
@@ -68,11 +81,11 @@ class DefaultContainer:
         video_mapper = VideoMapper()
         self.injector.binder.bind(VideoMapper, to=video_mapper)
 
-        channel_response_mapper = ChannelResponseMapper()
-        self.injector.binder.bind(ChannelResponseMapper, to=channel_response_mapper)
+        channel_response_mapper = GetChannelResponseMapper()
+        self.injector.binder.bind(GetChannelResponseMapper, to=channel_response_mapper)
 
-        video_response_mapper = VideoResponseMapper()
-        self.injector.binder.bind(VideoResponseMapper, to=video_response_mapper)
+        video_response_mapper = GetVideoResponseMapper()
+        self.injector.binder.bind(GetVideoResponseMapper, to=video_response_mapper)
 
         xml_response_mapper = XmlResponseMapper()
         self.injector.binder.bind(XmlResponseMapper, to=xml_response_mapper)

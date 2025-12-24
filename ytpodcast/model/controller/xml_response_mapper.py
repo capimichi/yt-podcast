@@ -1,12 +1,16 @@
+"""Module for ytpodcast.model.controller.xml_response_mapper."""
+
 from xml.etree import ElementTree
 
 from pydantic import BaseModel
 
 
+# pylint: disable=too-few-public-methods
 class XmlResponseMapper:
     """Build XML responses from controller models."""
 
     def create_from_response(self, root_name: str, payload: BaseModel) -> str:
+        """Serialize a response model into XML."""
         root = ElementTree.Element(root_name)
         for key, value in payload.dict().items():
             child = ElementTree.SubElement(root, key)

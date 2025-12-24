@@ -1,3 +1,5 @@
+"""Module for ytpodcast.api."""
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
@@ -9,7 +11,7 @@ from ytpodcast.controller.channel_controller import ChannelController
 from ytpodcast.controller.video_controller import VideoController
 
 
-default_container: DefaultContainer = DefaultContainer.getInstance()
+default_container: DefaultContainer = DefaultContainer.get_instance()
 app_config: AppConfig = default_container.get(AppConfig)
 
 app = FastAPI(
@@ -35,11 +37,13 @@ app.add_middleware(
 
 @app.get("/", include_in_schema=False)
 async def root():
+    """Redirect to the API documentation."""
     return RedirectResponse(url="/docs")
 
 
 @app.get("/health", tags=["Health"])
 async def health_check():
+    """Return a basic health payload."""
     return {"status": "ok"}
 
 

@@ -1,7 +1,9 @@
+"""Module for ytpodcast.model.controller.get_channel_response."""
+
 from pydantic import BaseModel
 
 
-class ChannelResponseModel(BaseModel):
+class GetChannelResponse(BaseModel):
     """Response payload for channel routes."""
 
     channel_id: str

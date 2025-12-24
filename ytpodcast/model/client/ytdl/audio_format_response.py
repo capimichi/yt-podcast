@@ -1,7 +1,9 @@
+"""Module for ytpodcast.model.client.ytdl.audio_format_response."""
+
 from pydantic import BaseModel
 
 
-class YtDlAudioFormatModel(BaseModel):
+class AudioFormatResponse(BaseModel):
     """Audio format details returned by yt-dlp."""
 
     format_id: str

@@ -1,12 +1,16 @@
-from ytpodcast.model.client.ytapi.channel_model import YtApiChannelModel
-from ytpodcast.model.service.channel_model import ChannelModel
+"""Module for ytpodcast.model.service.channel_mapper."""
+
+from ytpodcast.model.client.ytapi.channel_response import ChannelResponse
+from ytpodcast.model.service.channel import Channel
 
 
+# pylint: disable=too-few-public-methods
 class ChannelMapper:
-    """Build ChannelModel instances from client payloads."""
+    """Build channel domain instances from client payloads."""
 
-    def create_from_ytapi(self, payload: YtApiChannelModel) -> ChannelModel:
-        return ChannelModel(
+    def create_from_channel_response(self, payload: ChannelResponse) -> Channel:
+        """Convert a YouTube API payload into a channel."""
+        return Channel(
             channel_id=payload.channel_id,
             title=payload.title,
             description=payload.description,
