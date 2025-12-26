@@ -8,11 +8,11 @@ from ytpodcast.model.service.channel import Channel
 class ChannelMapper:
     """Build channel domain instances from client payloads."""
 
-    def create_from_channel_response(self, payload: ChannelResponse) -> Channel:
+    def create_from_channel_response(self, channel_response: ChannelResponse) -> Channel:
         """Convert a YouTube API payload into a channel."""
         return Channel(
-            channel_id=payload.channel_id,
-            title=payload.title,
-            description=payload.description,
-            url=payload.url,
+            channel_id=channel_response.channel_id,
+            title=channel_response.title,
+            description=channel_response.description,
+            url=channel_response.url,
         )

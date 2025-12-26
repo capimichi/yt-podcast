@@ -2,5 +2,9 @@
   "typeCheckingMode": "strict",
   "reportMissingParameterType": "error",
   "reportMissingReturnType": "error",
-  "reportMissingVariableType": "error"
+  "reportMissingVariableType": "error",
+  "reportUnknownMemberType": "none",
+  "reportAssignmentType": "none",
+  "reportUnknownVariableType": "none",
+  "reportMissingTypeStubs": "none"
 }

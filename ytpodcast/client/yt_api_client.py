@@ -1,7 +1,7 @@
 """Module for ytpodcast.client.yt_api_client."""
 
 from datetime import timedelta
-from typing import Any, cast
+from typing import Any
 
 from isodate import parse_duration
 from isodate.duration import Duration
@@ -16,24 +16,28 @@ from ytpodcast.model.client.ytapi.video_response import VideoResponse
 class YtApiClient:
     """Client wrapper for the YouTube Data API."""
 
-    def __init__(self, base_url: str, api_key: str | None) -> None:
+    def __init__(self, base_url: str, api_key: str) -> None:
         """Store API configuration."""
         self.base_url: str = base_url.rstrip("/")
-        self.api_key: str | None = api_key
-        self.client: Client | None = Client(api_key=api_key) if api_key else None
+        self.api_key: str
+        self.client: Client = Client(api_key=api_key)
 
     def fetch_channel(self, identifier: str) -> ChannelResponse:
         """Fetch a channel payload from the YouTube API."""
-        if self.client is None:
-            raise ValueError("YT_API_KEY is required to fetch channel data.")
+        channel_params: dict[str, str] = {}
+        if identifier.startswith("@"):
+            channel_params["for_handle"] = identifier
+        elif identifier.startswith("UC") and len(identifier) == 24:
+            channel_params["channel_id"] = identifier
+        else:
+            channel_params["for_username"] = identifier
 
-        response = cast(
-            ChannelListResponse,
-            self.client.channels.list(
+        response: ChannelListResponse = self.client.channels.list(
             parts="snippet",
-            channel_id=identifier,
-            ),
+            return_json=False,
+            **channel_params,
         )
+
         items: list[Any] = response.items
         if not items:
             raise ValueError(f"Channel not found for identifier '{identifier}'.")
@@ -50,15 +54,11 @@ class YtApiClient:
 
     def fetch_video(self, video_id: str) -> VideoResponse:
         """Fetch a video payload from the YouTube API."""
-        if self.client is None:
-            raise ValueError("YT_API_KEY is required to fetch video data.")
 
-        response = cast(
-            VideoListResponse,
-            self.client.videos.list(
+        response: VideoListResponse = self.client.videos.list(
             parts="snippet,contentDetails",
             video_id=video_id,
-            ),
+            return_json=False,
         )
         items: list[Any] = response.items
         if not items:

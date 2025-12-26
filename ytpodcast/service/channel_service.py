@@ -5,6 +5,7 @@ from injector import inject
 from ytpodcast.client.yt_api_client import YtApiClient
 from ytpodcast.model.service.channel_mapper import ChannelMapper
 from ytpodcast.model.service.channel import Channel
+from ytpodcast.model.client.ytapi.channel_response import ChannelResponse
 
 
 # pylint: disable=too-few-public-methods
@@ -23,5 +24,5 @@ class ChannelService:
 
     def get_channel(self, identifier: str) -> Channel:
         """Fetch and map channel data by identifier."""
-        payload = self.yt_api_client.fetch_channel(identifier)
-        return self.yt_api_mapper.create_from_channel_response(payload)
+        channel_response: ChannelResponse = self.yt_api_client.fetch_channel(identifier)
+        return self.yt_api_mapper.create_from_channel_response(channel_response)

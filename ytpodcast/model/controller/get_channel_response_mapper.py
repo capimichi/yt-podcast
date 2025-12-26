@@ -8,6 +8,6 @@ from ytpodcast.model.service.channel import Channel
 class GetChannelResponseMapper:
     """Build channel response payloads from service models."""
 
-    def create_from_channel(self, payload: Channel) -> GetChannelResponse:
+    def create_from_channel(self, channel: Channel) -> GetChannelResponse:
         """Convert a service channel into a response payload."""
-        return GetChannelResponse(**payload.dict())
+        return GetChannelResponse(**channel.dict())

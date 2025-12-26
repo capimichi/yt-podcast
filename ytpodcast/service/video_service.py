@@ -4,6 +4,8 @@ from injector import inject
 
 from ytpodcast.client.yt_api_client import YtApiClient
 from ytpodcast.client.yt_dl_client import YtDlClient
+from ytpodcast.model.client.ytapi.video_response import VideoResponse
+from ytpodcast.model.client.ytdl.audio_format_response import AudioFormatResponse
 from ytpodcast.model.service.video_mapper import VideoMapper
 from ytpodcast.model.service.video import Video
 
@@ -26,6 +28,11 @@ class VideoService:
 
     def get_video(self, video_id: str) -> Video:
         """Fetch and map video data by id."""
-        yt_api_payload = self.yt_api_client.fetch_video(video_id)
-        yt_dl_payload = self.yt_dl_client.fetch_audio_format(video_id)
-        return self.video_mapper.create_from_video_response(yt_api_payload, yt_dl_payload)
+        yt_api_response: VideoResponse = self.yt_api_client.fetch_video(video_id)
+        audio_format_response: AudioFormatResponse = self.yt_dl_client.fetch_audio_format(
+            video_id
+        )
+        return self.video_mapper.create_from_video_response(
+            yt_api_response,
+            audio_format_response,
+        )

@@ -8,6 +8,6 @@ from ytpodcast.model.service.video import Video
 class GetVideoResponseMapper:
     """Build video response payloads from service models."""
 
-    def create_from_video(self, payload: Video) -> GetVideoResponse:
+    def create_from_video(self, video: Video) -> GetVideoResponse:
         """Convert a service video into a response payload."""
-        return GetVideoResponse(**payload.dict())
+        return GetVideoResponse(**video.dict())

@@ -16,6 +16,7 @@
 - `pip install -r requirements.txt` install runtime dependencies.
 - `python -m ytpodcast.api` run the API using the built-in `uvicorn` launcher.
 - `uvicorn ytpodcast.api:app --host 0.0.0.0 --port 8459` run explicitly via Uvicorn.
+- `YT_API_KEY=... python -m unittest tests/integration/client/test_yt_api_client.py` run the YouTube client integration test.
 
 ## Configuration & Environment
 - Environment variables are loaded via `python-dotenv` in `ytpodcast/container/default_container.py`.
@@ -27,6 +28,8 @@
 - Use `snake_case` for modules/functions, `PascalCase` for classes, and `UPPER_SNAKE_CASE` for constants.
 - Keep layers separated (controller → service → client/model) to match existing structure.
 - Pylance/Pyright uses strict type checking; add explicit types for parameters, returns, and variables.
+- Prefer explicit type annotations for local variables (e.g., `response: ChannelResponse = ...`), even when inference would work.
+- Prefer descriptive variable names over generic ones like `payload` or `response` when clarity matters.
 - Add docstrings for functions and methods to satisfy pylint C0116.
 - Add module docstrings and resolve pylint warnings (naming, too-few-public-methods, duplicate-code) for new or changed modules.
 - Pylint configuration: `.pylintrc` disables `invalid-name`.
