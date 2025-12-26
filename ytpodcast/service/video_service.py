@@ -6,7 +6,7 @@ from ytpodcast.client.yt_api_client import YtApiClient
 from ytpodcast.client.yt_dl_client import YtDlClient
 from ytpodcast.model.client.ytapi.video_response import VideoResponse
 from ytpodcast.model.client.ytdl.audio_format_response import AudioFormatResponse
-from ytpodcast.model.service.video_mapper import VideoMapper
+from ytpodcast.mapper.service.video_mapper import VideoMapper
 from ytpodcast.model.service.video import Video
 
 

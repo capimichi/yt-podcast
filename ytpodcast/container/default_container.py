@@ -11,13 +11,16 @@ from ytpodcast.client.yt_dl_client import YtDlClient
 from ytpodcast.config.app_config import AppConfig
 from ytpodcast.controller.channel_controller import ChannelController
 from ytpodcast.controller.video_controller import VideoController
-from ytpodcast.model.controller.get_channel_response_mapper import GetChannelResponseMapper
-from ytpodcast.model.controller.get_video_response_mapper import GetVideoResponseMapper
-from ytpodcast.model.controller.xml_response_mapper import XmlResponseMapper
-from ytpodcast.model.service.channel_mapper import ChannelMapper
-from ytpodcast.model.service.video_mapper import VideoMapper
+from ytpodcast.controller.feed_controller import FeedController
+from ytpodcast.mapper.controller.get_channel_response_mapper import GetChannelResponseMapper
+from ytpodcast.mapper.controller.get_video_response_mapper import GetVideoResponseMapper
+from ytpodcast.mapper.controller.rss_feed_response_mapper import RssFeedResponseMapper
+from ytpodcast.mapper.service.channel_mapper import ChannelMapper
+from ytpodcast.mapper.service.video_mapper import VideoMapper
+from ytpodcast.mapper.service.feed_item_mapper import FeedItemMapper
 from ytpodcast.service.channel_service import ChannelService
 from ytpodcast.service.video_service import VideoService
+from ytpodcast.service.feed_service import FeedService
 
 
 # pylint: disable=too-many-instance-attributes
@@ -87,8 +90,11 @@ class DefaultContainer:
         video_response_mapper = GetVideoResponseMapper()
         self.injector.binder.bind(GetVideoResponseMapper, to=video_response_mapper)
 
-        xml_response_mapper = XmlResponseMapper()
-        self.injector.binder.bind(XmlResponseMapper, to=xml_response_mapper)
+        feed_item_mapper = FeedItemMapper()
+        self.injector.binder.bind(FeedItemMapper, to=feed_item_mapper)
+
+        rss_feed_response_mapper = RssFeedResponseMapper()
+        self.injector.binder.bind(RssFeedResponseMapper, to=rss_feed_response_mapper)
 
         yt_api_client = YtApiClient(
             base_url=self.yt_api_base_url,
@@ -105,16 +111,20 @@ class DefaultContainer:
         video_service = VideoService(yt_api_client, yt_dl_client, video_mapper)
         self.injector.binder.bind(VideoService, to=video_service)
 
+        feed_service = FeedService(yt_api_client, channel_mapper, feed_item_mapper)
+        self.injector.binder.bind(FeedService, to=feed_service)
+
         channel_controller = ChannelController(
             channel_service,
             channel_response_mapper,
-            xml_response_mapper,
         )
         self.injector.binder.bind(ChannelController, to=channel_controller)
 
         video_controller = VideoController(
             video_service,
             video_response_mapper,
-            xml_response_mapper,
         )
         self.injector.binder.bind(VideoController, to=video_controller)
+
+        feed_controller = FeedController(feed_service, rss_feed_response_mapper)
+        self.injector.binder.bind(FeedController, to=feed_controller)

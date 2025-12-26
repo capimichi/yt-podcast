@@ -3,7 +3,7 @@
 from injector import inject
 
 from ytpodcast.client.yt_api_client import YtApiClient
-from ytpodcast.model.service.channel_mapper import ChannelMapper
+from ytpodcast.mapper.service.channel_mapper import ChannelMapper
 from ytpodcast.model.service.channel import Channel
 from ytpodcast.model.client.ytapi.channel_response import ChannelResponse
 

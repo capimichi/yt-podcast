@@ -1,4 +1,4 @@
-"""Module for ytpodcast.model.service.video_mapper."""
+"""Module for ytpodcast.mapper.service.video_mapper."""
 
 from ytpodcast.model.client.ytapi.video_response import VideoResponse
 from ytpodcast.model.client.ytdl.audio_format_response import AudioFormatResponse

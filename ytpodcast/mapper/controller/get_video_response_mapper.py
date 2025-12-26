@@ -1,4 +1,4 @@
-"""Module for ytpodcast.model.controller.get_video_response_mapper."""
+"""Module for ytpodcast.mapper.controller.get_video_response_mapper."""
 
 from ytpodcast.model.controller.get_video_response import GetVideoResponse
 from ytpodcast.model.service.video import Video

@@ -8,6 +8,7 @@ from starlette.responses import RedirectResponse
 from ytpodcast.config.app_config import AppConfig
 from ytpodcast.container.default_container import DefaultContainer
 from ytpodcast.controller.channel_controller import ChannelController
+from ytpodcast.controller.feed_controller import FeedController
 from ytpodcast.controller.video_controller import VideoController
 
 
@@ -21,9 +22,11 @@ app = FastAPI(
 )
 
 channel_controller: ChannelController = default_container.get(ChannelController)
+feed_controller: FeedController = default_container.get(FeedController)
 video_controller: VideoController = default_container.get(VideoController)
 
 app.include_router(channel_controller.router)
+app.include_router(feed_controller.router)
 app.include_router(video_controller.router)
 
 app.add_middleware(

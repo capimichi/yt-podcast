@@ -1,0 +1,55 @@
+"""Module for ytpodcast.mapper.controller.rss_feed_response_mapper."""
+
+from datetime import datetime
+from datetime import timezone
+from email.utils import format_datetime
+from xml.etree import ElementTree
+
+from ytpodcast.model.service.channel_feed import ChannelFeed
+from ytpodcast.model.service.feed_item import FeedItem
+
+
+# pylint: disable=too-few-public-methods
+class RssFeedResponseMapper:
+    """Build RSS XML responses from channel feeds."""
+
+    def create_from_feed(self, feed: ChannelFeed) -> str:
+        """Serialize a channel feed into RSS XML."""
+        rss_element: ElementTree.Element = ElementTree.Element("rss", version="2.0")
+        channel_element: ElementTree.Element = ElementTree.SubElement(rss_element, "channel")
+
+        ElementTree.SubElement(channel_element, "title").text = feed.title
+        ElementTree.SubElement(channel_element, "link").text = feed.url
+        ElementTree.SubElement(channel_element, "description").text = feed.description
+
+        if feed.items:
+            latest_item: FeedItem = max(feed.items, key=lambda item: item.published_at)
+            ElementTree.SubElement(channel_element, "lastBuildDate").text = self._format_datetime(
+                latest_item.published_at
+            )
+
+        for item in feed.items:
+            item_element: ElementTree.Element = ElementTree.SubElement(channel_element, "item")
+            ElementTree.SubElement(item_element, "title").text = item.title
+            ElementTree.SubElement(item_element, "link").text = item.url
+            ElementTree.SubElement(item_element, "description").text = item.description
+            guid_element: ElementTree.Element = ElementTree.SubElement(
+                item_element,
+                "guid",
+                isPermaLink="true",
+            )
+            guid_element.text = item.url
+            ElementTree.SubElement(item_element, "pubDate").text = self._format_datetime(
+                item.published_at
+            )
+
+        xml_body: str = ElementTree.tostring(rss_element, encoding="unicode")
+        return xml_body
+
+    def _format_datetime(self, value: datetime) -> str:
+        """Return RFC 2822 formatted datetimes for RSS feeds."""
+        normalized_value: datetime = (
+            value if value.tzinfo is not None else value.replace(tzinfo=timezone.utc)
+        )
+        normalized_value = normalized_value.astimezone(timezone.utc)
+        return format_datetime(normalized_value)

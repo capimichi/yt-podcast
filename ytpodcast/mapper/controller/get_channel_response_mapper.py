@@ -1,4 +1,4 @@
-"""Module for ytpodcast.model.controller.get_channel_response_mapper."""
+"""Module for ytpodcast.mapper.controller.get_channel_response_mapper."""
 
 from ytpodcast.model.controller.get_channel_response import GetChannelResponse
 from ytpodcast.model.service.channel import Channel

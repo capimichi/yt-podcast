@@ -17,6 +17,7 @@
 - `python -m ytpodcast.api` run the API using the built-in `uvicorn` launcher.
 - `uvicorn ytpodcast.api:app --host 0.0.0.0 --port 8459` run explicitly via Uvicorn.
 - `YT_API_KEY=... python -m unittest tests/integration/client/test_yt_api_client.py` run the YouTube client integration test.
+- `YT_API_KEY=... python -m unittest tests/integration/controller/test_feed_controller.py` run the feed controller integration test.
 
 ## Configuration & Environment
 - Environment variables are loaded via `python-dotenv` in `ytpodcast/container/default_container.py`.
