@@ -1,5 +1,7 @@
 """Module for ytpodcast.service.video_service."""
 
+from pathlib import Path
+
 from injector import inject
 
 from ytpodcast.client.yt_api_client import YtApiClient
@@ -36,3 +38,7 @@ class VideoService:
             yt_api_response,
             audio_format_response,
         )
+
+    def download_audio(self, video_id: str) -> Path:
+        """Download a single audio format for a video."""
+        return self.yt_dl_client.download_audio(video_id)

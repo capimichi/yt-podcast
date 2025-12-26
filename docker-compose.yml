@@ -1,0 +1,10 @@
+services:
+  ytpodcast:
+    build: .
+    ports:
+      - "8459:8459"
+    environment:
+      DOWNLOAD_DIR: /app/var/downloads
+      YTDL_DEFAULT_FORMAT: bestaudio
+    volumes:
+      - ./var:/app/var

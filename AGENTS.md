@@ -18,6 +18,8 @@
 - `uvicorn ytpodcast.api:app --host 0.0.0.0 --port 8459` run explicitly via Uvicorn.
 - `YT_API_KEY=... python -m unittest tests/integration/client/test_yt_api_client.py` run the YouTube client integration test.
 - `YT_API_KEY=... python -m unittest tests/integration/controller/test_feed_controller.py` run the feed controller integration test.
+- `python -m unittest tests/integration/client/test_yt_dl_client.py` run the yt-dlp integration test.
+- `python -m unittest tests/integration/controller/test_video_download_controller.py` run the video download controller integration test.
 
 ## Configuration & Environment
 - Environment variables are loaded via `python-dotenv` in `ytpodcast/container/default_container.py`.
