@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run API (ytpodcast.api)",
+      "type": "python",
+      "request": "launch",
+      "module": "ytpodcast.api",
+      "python": "${workspaceFolder}/.venv/bin/python",
+      "justMyCode": true
+    }
+  ]
+}
