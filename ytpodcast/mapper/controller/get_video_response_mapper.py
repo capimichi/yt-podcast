@@ -10,4 +10,13 @@ class GetVideoResponseMapper:
 
     def create_from_video(self, video: Video) -> GetVideoResponse:
         """Convert a service video into a response payload."""
-        return GetVideoResponse(**video.dict())
+        return GetVideoResponse(
+            video_id=video.get_video_id(),
+            title=video.get_title(),
+            description=video.get_description(),
+            duration_seconds=video.get_duration_seconds(),
+            url=video.get_url(),
+            channel_id=video.get_channel_id(),
+            audio_format=video.get_audio_format(),
+            audio_bitrate_kbps=video.get_audio_bitrate_kbps(),
+        )

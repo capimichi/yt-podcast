@@ -26,29 +26,33 @@ class RssFeedResponseMapper:
         rss_element: ElementTree.Element = ElementTree.Element("rss", version="2.0")
         channel_element: ElementTree.Element = ElementTree.SubElement(rss_element, "channel")
 
-        ElementTree.SubElement(channel_element, "title").text = feed.title
-        ElementTree.SubElement(channel_element, "link").text = feed.url
-        ElementTree.SubElement(channel_element, "description").text = feed.description
+        ElementTree.SubElement(channel_element, "title").text = feed.get_title()
+        ElementTree.SubElement(channel_element, "link").text = feed.get_url()
+        ElementTree.SubElement(channel_element, "description").text = feed.get_description()
 
-        if feed.items:
-            latest_item: FeedItem = max(feed.items, key=lambda item: item.published_at)
+        feed_items: list[FeedItem] = feed.get_items()
+        if feed_items:
+            latest_item: FeedItem = max(
+                feed_items,
+                key=lambda item: item.get_published_at(),
+            )
             ElementTree.SubElement(channel_element, "lastBuildDate").text = self._format_datetime(
-                latest_item.published_at
+                latest_item.get_published_at()
             )
 
-        for item in feed.items:
+        for item in feed_items:
             item_element: ElementTree.Element = ElementTree.SubElement(channel_element, "item")
-            ElementTree.SubElement(item_element, "title").text = item.title
-            ElementTree.SubElement(item_element, "link").text = item.url
-            ElementTree.SubElement(item_element, "description").text = item.description
+            ElementTree.SubElement(item_element, "title").text = item.get_title()
+            ElementTree.SubElement(item_element, "link").text = item.get_url()
+            ElementTree.SubElement(item_element, "description").text = item.get_description()
             guid_element: ElementTree.Element = ElementTree.SubElement(
                 item_element,
                 "guid",
                 isPermaLink="true",
             )
-            guid_element.text = item.url
+            guid_element.text = item.get_url()
             ElementTree.SubElement(item_element, "pubDate").text = self._format_datetime(
-                item.published_at
+                item.get_published_at()
             )
             ElementTree.SubElement(
                 item_element,
@@ -71,4 +75,4 @@ class RssFeedResponseMapper:
     def _build_media_url(self, item: FeedItem) -> str:
         """Build the download URL for the feed item media."""
         base_url: str = self.app_config.api_base_url.rstrip("/")
-        return f"{base_url}/videos/{item.video_id}/download"
+        return f"{base_url}/videos/{item.get_video_id()}/download"

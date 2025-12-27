@@ -32,14 +32,14 @@ class TestYtApiClient(unittest.TestCase):
     def test_fetch_channel_by_handle(self) -> None:
         """Fetch a channel by handle."""
         response: ChannelResponse = self.client.fetch_channel(self.channel_handle)
-        self.assertTrue(response.channel_id)
-        self.assertTrue(response.title)
-        self.assertIn(response.channel_id, response.url)
+        self.assertTrue(response.get_channel_id())
+        self.assertTrue(response.get_title())
+        self.assertIn(response.get_channel_id(), response.get_url())
 
     def test_fetch_video_by_id(self) -> None:
         """Fetch a video by id."""
         response: VideoResponse = self.client.fetch_video(self.video_id)
-        self.assertEqual(response.video_id, self.video_id)
-        self.assertTrue(response.title)
-        self.assertTrue(response.channel_id)
-        self.assertIn(self.video_id, response.url)
+        self.assertEqual(response.get_video_id(), self.video_id)
+        self.assertTrue(response.get_title())
+        self.assertTrue(response.get_channel_id())
+        self.assertIn(self.video_id, response.get_url())

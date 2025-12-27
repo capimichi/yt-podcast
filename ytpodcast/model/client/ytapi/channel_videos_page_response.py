@@ -10,3 +10,11 @@ class ChannelVideosPageResponse(BaseModel):
 
     items: list[ChannelVideoResponse]
     next_page_token: str | None
+
+    def get_items(self) -> list[ChannelVideoResponse]:
+        """Return the channel video items."""
+        return self.items
+
+    def get_next_page_token(self) -> str | None:
+        """Return the next page token, if any."""
+        return self.next_page_token

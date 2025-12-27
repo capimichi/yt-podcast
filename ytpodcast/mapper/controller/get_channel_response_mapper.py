@@ -10,4 +10,9 @@ class GetChannelResponseMapper:
 
     def create_from_channel(self, channel: Channel) -> GetChannelResponse:
         """Convert a service channel into a response payload."""
-        return GetChannelResponse(**channel.dict())
+        return GetChannelResponse(
+            channel_id=channel.get_channel_id(),
+            title=channel.get_title(),
+            description=channel.get_description(),
+            url=channel.get_url(),
+        )

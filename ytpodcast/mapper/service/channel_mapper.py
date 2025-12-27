@@ -11,8 +11,8 @@ class ChannelMapper:
     def create_from_channel_response(self, channel_response: ChannelResponse) -> Channel:
         """Convert a YouTube API payload into a channel."""
         return Channel(
-            channel_id=channel_response.channel_id,
-            title=channel_response.title,
-            description=channel_response.description,
-            url=channel_response.url,
+            channel_id=channel_response.get_channel_id(),
+            title=channel_response.get_title(),
+            description=channel_response.get_description(),
+            url=channel_response.get_url(),
         )

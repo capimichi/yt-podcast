@@ -14,9 +14,9 @@ class FeedItemMapper:
     ) -> FeedItem:
         """Convert a channel video payload into a feed item."""
         return FeedItem(
-            video_id=channel_video_response.video_id,
-            title=channel_video_response.title,
-            description=channel_video_response.description,
-            url=channel_video_response.url,
-            published_at=channel_video_response.published_at,
+            video_id=channel_video_response.get_video_id(),
+            title=channel_video_response.get_title(),
+            description=channel_video_response.get_description(),
+            url=channel_video_response.get_url(),
+            published_at=channel_video_response.get_published_at(),
         )

@@ -45,7 +45,7 @@ class FeedService:
         channel: Channel = self.channel_mapper.create_from_channel_response(channel_response)
         requested_total: int = self._resolve_requested_total(limit, offset)
         filtered_responses: list[ChannelVideoResponse] = self._collect_filtered_videos(
-            channel.channel_id,
+            channel.get_channel_id(),
             requested_total,
             from_date,
             to_date,
@@ -60,10 +60,10 @@ class FeedService:
             for video_response in sliced_responses
         ]
         return ChannelFeed(
-            channel_id=channel.channel_id,
-            title=channel.title,
-            description=channel.description,
-            url=channel.url,
+            channel_id=channel.get_channel_id(),
+            title=channel.get_title(),
+            description=channel.get_description(),
+            url=channel.get_url(),
             items=items,
         )
 
@@ -96,14 +96,14 @@ class FeedService:
                 page_token=page_token,
             )
             page_filtered: list[ChannelVideoResponse] = self._filter_by_date_range(
-                page.items,
+                page.get_items(),
                 from_date,
                 to_date,
             )
             collected.extend(page_filtered)
-            if not page.next_page_token:
+            if not page.get_next_page_token():
                 break
-            page_token = page.next_page_token
+            page_token = page.get_next_page_token()
         return collected
 
     def _normalize_filter_date(self, value: datetime | None) -> datetime | None:
@@ -125,7 +125,7 @@ class FeedService:
         normalized_to: datetime | None = self._normalize_filter_date(to_date)
         filtered: list[ChannelVideoResponse] = []
         for video in video_responses:
-            published_at: datetime = video.published_at
+            published_at: datetime = video.get_published_at()
             if published_at.tzinfo is None:
                 published_at = published_at.replace(tzinfo=timezone.utc)
             published_at = published_at.astimezone(timezone.utc)
