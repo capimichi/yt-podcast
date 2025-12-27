@@ -10,4 +10,5 @@ class AudioFormatResponse(BaseModel):
     extension: str
     audio_bitrate_kbps: int | None
     is_audio_only: bool
+    language: str | None = None
     note: str | None = None
