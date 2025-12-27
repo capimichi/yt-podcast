@@ -35,6 +35,7 @@
 - Prefer descriptive variable names over generic ones like `payload` or `response` when clarity matters.
 - Add docstrings for functions and methods to satisfy pylint C0116.
 - Add module docstrings and resolve pylint warnings (naming, too-few-public-methods, duplicate-code) for new or changed modules.
+- Add getter methods for model fields (service/client/controller) when updating or adding models.
 - Pylint configuration: `.pylintrc` disables `invalid-name`.
 - Naming conventions:
   - Controller models describe response payloads (e.g., `GetChannelResponse`, `GetChannelXmlResponse`).

@@ -5,6 +5,9 @@ from datetime import timezone
 from email.utils import format_datetime
 from xml.etree import ElementTree
 
+from injector import inject
+
+from ytpodcast.config.app_config import AppConfig
 from ytpodcast.model.service.channel_feed import ChannelFeed
 from ytpodcast.model.service.feed_item import FeedItem
 
@@ -12,6 +15,11 @@ from ytpodcast.model.service.feed_item import FeedItem
 # pylint: disable=too-few-public-methods
 class RssFeedResponseMapper:
     """Build RSS XML responses from channel feeds."""
+
+    @inject  # type: ignore[reportUntypedFunctionDecorator]
+    def __init__(self, app_config: AppConfig) -> None:
+        """Store configuration for RSS rendering."""
+        self.app_config = app_config
 
     def create_from_feed(self, feed: ChannelFeed) -> str:
         """Serialize a channel feed into RSS XML."""
@@ -42,6 +50,12 @@ class RssFeedResponseMapper:
             ElementTree.SubElement(item_element, "pubDate").text = self._format_datetime(
                 item.published_at
             )
+            ElementTree.SubElement(
+                item_element,
+                "enclosure",
+                url=self._build_media_url(item),
+                type="audio/mpeg",
+            )
 
         xml_body: str = ElementTree.tostring(rss_element, encoding="unicode")
         return xml_body
@@ -53,3 +67,8 @@ class RssFeedResponseMapper:
         )
         normalized_value = normalized_value.astimezone(timezone.utc)
         return format_datetime(normalized_value)
+
+    def _build_media_url(self, item: FeedItem) -> str:
+        """Build the download URL for the feed item media."""
+        base_url: str = self.app_config.api_base_url.rstrip("/")
+        return f"{base_url}/videos/{item.video_id}/download"

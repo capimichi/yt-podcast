@@ -63,6 +63,10 @@ class DefaultContainer:
         self.debug = os.environ.get("DEBUG", "false").lower() == "true"
         self.api_host = os.environ.get("API_HOST", "0.0.0.0")
         self.api_port = int(os.environ.get("API_PORT", "8459"))
+        self.api_base_url = os.environ.get(
+            "API_BASE_URL",
+            f"http://localhost:{self.api_port}",
+        )
         self.yt_api_base_url = os.environ.get("YT_API_BASE_URL", "https://youtube.googleapis.com")
         self.yt_api_key = os.environ.get("YT_API_KEY")
         self.ytdl_default_format = os.environ.get("YTDL_DEFAULT_FORMAT", "bestaudio")
@@ -77,6 +81,7 @@ class DefaultContainer:
             debug=self.debug,
             api_host=self.api_host,
             api_port=self.api_port,
+            api_base_url=self.api_base_url,
             yt_api_base_url=self.yt_api_base_url,
             yt_api_key=self.yt_api_key,
             ytdl_default_format=self.ytdl_default_format,
@@ -104,7 +109,7 @@ class DefaultContainer:
         feed_item_mapper = FeedItemMapper()
         self.injector.binder.bind(FeedItemMapper, to=feed_item_mapper)
 
-        rss_feed_response_mapper = RssFeedResponseMapper()
+        rss_feed_response_mapper = RssFeedResponseMapper(app_config)
         self.injector.binder.bind(RssFeedResponseMapper, to=rss_feed_response_mapper)
 
         yt_api_client = YtApiClient(

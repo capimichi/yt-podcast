@@ -13,3 +13,23 @@ class ChannelFeed(BaseModel):
     description: str
     url: str
     items: list[FeedItem]
+
+    def get_channel_id(self) -> str:
+        """Return the channel identifier."""
+        return self.channel_id
+
+    def get_title(self) -> str:
+        """Return the channel title."""
+        return self.title
+
+    def get_description(self) -> str:
+        """Return the channel description."""
+        return self.description
+
+    def get_url(self) -> str:
+        """Return the channel URL."""
+        return self.url
+
+    def get_items(self) -> list[FeedItem]:
+        """Return the feed items."""
+        return self.items
