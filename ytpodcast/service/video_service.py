@@ -47,8 +47,7 @@ class VideoService:
         selected_format: AudioFormatResponse = self._select_best_audio_format(audio_formats)
         return self.yt_dl_client.download_audio(
             video_id,
-            selected_format.format_id,
-            selected_format.extension,
+            selected_format.get_format_id(),
         )
 
     def _select_best_audio_format(
@@ -59,12 +58,12 @@ class VideoService:
         if not audio_formats:
             raise ValueError("No audio formats available for download.")
         audio_only: list[AudioFormatResponse] = [
-            format_item for format_item in audio_formats if format_item.is_audio_only
+            format_item for format_item in audio_formats if format_item.get_is_audio_only()
         ]
         candidates: list[AudioFormatResponse] = audio_only or audio_formats
         italian_candidates: list[AudioFormatResponse] = [
             format_item
             for format_item in candidates
-            if (format_item.language or "").lower() == "it"
+            if (format_item.get_language() or "").lower() == "it"
         ]
         return italian_candidates[0] if italian_candidates else candidates[0]

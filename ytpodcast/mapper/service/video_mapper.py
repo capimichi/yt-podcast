@@ -22,6 +22,6 @@ class VideoMapper:
             duration_seconds=video_response.duration_seconds,
             url=video_response.url,
             channel_id=video_response.channel_id,
-            audio_format=audio_format_response.format_id,
-            audio_bitrate_kbps=audio_format_response.audio_bitrate_kbps,
+            audio_format=audio_format_response.get_format_id(),
+            audio_bitrate_kbps=audio_format_response.get_audio_bitrate_kbps(),
         )

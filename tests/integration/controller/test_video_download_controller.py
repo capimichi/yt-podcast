@@ -15,7 +15,7 @@ class TestVideoDownloadController(unittest.TestCase):
     """Integration tests for video download routes."""
 
     client: TestClient
-    video_id = "TpeQKp0WcfQ"
+    video_id = "FEtPLvsBS2M"
 
     @classmethod
     def setUpClass(cls) -> None:

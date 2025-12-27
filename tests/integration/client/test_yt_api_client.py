@@ -16,7 +16,7 @@ class TestYtApiClient(unittest.TestCase):
     api_key: str
     client: YtApiClient
     channel_handle = "@francescocosta21"
-    video_id = "TpeQKp0WcfQ"
+    video_id = "FEtPLvsBS2M"
 
     @classmethod
     def setUpClass(cls) -> None:

@@ -68,6 +68,7 @@ class DefaultContainer:
         self.ytdl_default_format = os.environ.get("YTDL_DEFAULT_FORMAT", "bestaudio")
         self.download_dir = os.environ.get("DOWNLOAD_DIR", os.path.join("var", "downloads"))
         self.ytdl_executable_path = os.environ.get("YTDL_EXECUTABLE_PATH", "yt-dlp")
+        self.ffmpeg_executable_path = os.environ.get("FFMPEG_EXECUTABLE_PATH", "ffmpeg")
 
     def _init_bindings(self) -> None:
         """Bind configured services, mappers, and clients."""
@@ -115,7 +116,8 @@ class DefaultContainer:
         yt_dl_client = YtDlClient(
             default_format=self.ytdl_default_format,
             download_dir=self.download_dir,
-            executable_path=self.ytdl_executable_path,
+            ytdl_executable_path=self.ytdl_executable_path,
+            ffmpeg_executable_path=self.ffmpeg_executable_path,
         )
         self.injector.binder.bind(YtDlClient, to=yt_dl_client)
 
