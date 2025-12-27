@@ -17,6 +17,6 @@ COPY . /app
 
 RUN mkdir -p /app/var/downloads
 
-EXPOSE 8459
+EXPOSE 8000
 
 CMD ["python", "-m", "ytpodcast.api"]

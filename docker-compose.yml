@@ -2,7 +2,7 @@ services:
   ytpodcast:
     build: .
     ports:
-      - "8459:8459"
+      - "${HOST_API_PORT}:${API_PORT}"
     environment:
       DOWNLOAD_DIR: /app/var/downloads
       YTDL_EXECUTABLE_PATH: yt-dlp
