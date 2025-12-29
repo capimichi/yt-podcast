@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir yt-dlp
 
 COPY . /app
 
-RUN mkdir -p /app/var/downloads
+RUN mkdir -p /app/var/downloads /app/var/cache
 
 EXPOSE 8000
 

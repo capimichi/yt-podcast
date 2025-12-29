@@ -36,6 +36,8 @@
 - Add docstrings for functions and methods to satisfy pylint C0116.
 - Add module docstrings and resolve pylint warnings (naming, too-few-public-methods, duplicate-code) for new or changed modules.
 - Add getter methods for model fields (service/client/controller) when updating or adding models.
+- Define models in `ytpodcast/model/` using Pydantic (avoid dataclasses for models).
+- In `DefaultContainer`, bind only types that require explicit configuration or are retrieved via `DefaultContainer.get`; avoid redundant binds for simple mappers/helpers.
 - Pylint configuration: `.pylintrc` disables `invalid-name`.
 - Naming conventions:
   - Controller models describe response payloads (e.g., `GetChannelResponse`, `GetChannelXmlResponse`).

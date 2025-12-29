@@ -18,6 +18,7 @@ from ytpodcast.mapper.controller.rss_feed_response_mapper import RssFeedResponse
 from ytpodcast.mapper.controller.file_response_mapper import FileResponseMapper
 from ytpodcast.mapper.client.ytapi.channel_response_mapper import ChannelResponseMapper
 from ytpodcast.mapper.client.ytapi.video_response_mapper import VideoResponseMapper
+from ytpodcast.manager.cache_manager import CacheManager
 from ytpodcast.mapper.service.channel_mapper import ChannelMapper
 from ytpodcast.mapper.service.video_mapper import VideoMapper
 from ytpodcast.mapper.service.feed_item_mapper import FeedItemMapper
@@ -73,6 +74,7 @@ class DefaultContainer:
         self.yt_api_key = os.environ.get("YT_API_KEY")
         self.ytdl_default_format = os.environ.get("YTDL_DEFAULT_FORMAT", "bestaudio")
         self.download_dir = os.environ.get("DOWNLOAD_DIR", os.path.join("var", "downloads"))
+        self.cache_dir = os.environ.get("CACHE_DIR", os.path.join("var", "cache"))
         self.ytdl_executable_path = os.environ.get("YTDL_EXECUTABLE_PATH", "yt-dlp")
         self.ffmpeg_executable_path = os.environ.get("FFMPEG_EXECUTABLE_PATH", "ffmpeg")
 
@@ -91,34 +93,26 @@ class DefaultContainer:
         self.injector.binder.bind(AppConfig, to=app_config)
 
         channel_mapper = ChannelMapper()
-        self.injector.binder.bind(ChannelMapper, to=channel_mapper)
 
         video_mapper = VideoMapper()
-        self.injector.binder.bind(VideoMapper, to=video_mapper)
 
         file_helper = FileHelper()
-        self.injector.binder.bind(FileHelper, to=file_helper)
 
         channel_response_mapper = GetChannelResponseMapper()
-        self.injector.binder.bind(GetChannelResponseMapper, to=channel_response_mapper)
 
         video_response_mapper = GetVideoResponseMapper()
-        self.injector.binder.bind(GetVideoResponseMapper, to=video_response_mapper)
 
         file_response_mapper = FileResponseMapper(file_helper)
-        self.injector.binder.bind(FileResponseMapper, to=file_response_mapper)
 
         feed_item_mapper = FeedItemMapper()
-        self.injector.binder.bind(FeedItemMapper, to=feed_item_mapper)
 
         rss_feed_response_mapper = RssFeedResponseMapper(app_config)
-        self.injector.binder.bind(RssFeedResponseMapper, to=rss_feed_response_mapper)
+
+        cache_manager = CacheManager(cache_dir=self.cache_dir)
 
         yt_channel_response_mapper = ChannelResponseMapper()
-        self.injector.binder.bind(ChannelResponseMapper, to=yt_channel_response_mapper)
 
         yt_video_response_mapper = VideoResponseMapper()
-        self.injector.binder.bind(VideoResponseMapper, to=yt_video_response_mapper)
 
         yt_api_client = YtApiClient(
             base_url=self.yt_api_base_url,
@@ -134,20 +128,16 @@ class DefaultContainer:
             ytdl_executable_path=self.ytdl_executable_path,
             ffmpeg_executable_path=self.ffmpeg_executable_path,
         )
-        self.injector.binder.bind(YtDlClient, to=yt_dl_client)
 
         channel_service = ChannelService(yt_api_client, channel_mapper)
-        self.injector.binder.bind(ChannelService, to=channel_service)
 
         video_service = VideoService(
             yt_api_client,
             yt_dl_client,
             video_mapper,
         )
-        self.injector.binder.bind(VideoService, to=video_service)
 
         feed_service = FeedService(yt_api_client, channel_mapper, feed_item_mapper)
-        self.injector.binder.bind(FeedService, to=feed_service)
 
         channel_controller = ChannelController(
             channel_service,
@@ -162,5 +152,5 @@ class DefaultContainer:
         )
         self.injector.binder.bind(VideoController, to=video_controller)
 
-        feed_controller = FeedController(feed_service, rss_feed_response_mapper)
+        feed_controller = FeedController(feed_service, rss_feed_response_mapper, cache_manager)
         self.injector.binder.bind(FeedController, to=feed_controller)
