@@ -12,6 +12,8 @@ class ChannelFeed(BaseModel):
     title: str
     description: str
     url: str
+    author: str
+    image_url: str
     items: list[FeedItem]
 
     def get_channel_id(self) -> str:
@@ -29,6 +31,14 @@ class ChannelFeed(BaseModel):
     def get_url(self) -> str:
         """Return the channel URL."""
         return self.url
+
+    def get_author(self) -> str:
+        """Return the channel author."""
+        return self.author
+
+    def get_image_url(self) -> str:
+        """Return the channel image URL."""
+        return self.image_url
 
     def get_items(self) -> list[FeedItem]:
         """Return the feed items."""

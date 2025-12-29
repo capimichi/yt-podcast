@@ -64,6 +64,8 @@ class FeedService:
             title=channel.get_title(),
             description=channel.get_description(),
             url=channel.get_url(),
+            author=channel.get_title(),
+            image_url=channel.get_image_url(),
             items=items,
         )
 

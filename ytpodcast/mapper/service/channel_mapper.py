@@ -15,4 +15,5 @@ class ChannelMapper:
             title=channel_response.get_title(),
             description=channel_response.get_description(),
             url=channel_response.get_url(),
+            image_url=channel_response.get_image_url(),
         )

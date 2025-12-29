@@ -29,6 +29,14 @@ class RssFeedResponseMapper:
         ElementTree.SubElement(channel_element, "title").text = feed.get_title()
         ElementTree.SubElement(channel_element, "link").text = feed.get_url()
         ElementTree.SubElement(channel_element, "description").text = feed.get_description()
+        ElementTree.SubElement(channel_element, "author").text = feed.get_author()
+
+        image_url: str = feed.get_image_url()
+        if image_url:
+            image_element: ElementTree.Element = ElementTree.SubElement(channel_element, "image")
+            ElementTree.SubElement(image_element, "url").text = image_url
+            ElementTree.SubElement(image_element, "title").text = feed.get_title()
+            ElementTree.SubElement(image_element, "link").text = feed.get_url()
 
         feed_items: list[FeedItem] = feed.get_items()
         if feed_items:

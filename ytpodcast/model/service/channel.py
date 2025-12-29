@@ -10,6 +10,7 @@ class Channel(BaseModel):
     title: str
     description: str
     url: str
+    image_url: str
 
     def get_channel_id(self) -> str:
         """Return the channel identifier."""
@@ -26,3 +27,7 @@ class Channel(BaseModel):
     def get_url(self) -> str:
         """Return the channel URL."""
         return self.url
+
+    def get_image_url(self) -> str:
+        """Return the channel image URL."""
+        return self.image_url

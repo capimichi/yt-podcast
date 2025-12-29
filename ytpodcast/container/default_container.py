@@ -16,6 +16,8 @@ from ytpodcast.mapper.controller.get_channel_response_mapper import GetChannelRe
 from ytpodcast.mapper.controller.get_video_response_mapper import GetVideoResponseMapper
 from ytpodcast.mapper.controller.rss_feed_response_mapper import RssFeedResponseMapper
 from ytpodcast.mapper.controller.file_response_mapper import FileResponseMapper
+from ytpodcast.mapper.client.ytapi.channel_response_mapper import ChannelResponseMapper
+from ytpodcast.mapper.client.ytapi.video_response_mapper import VideoResponseMapper
 from ytpodcast.mapper.service.channel_mapper import ChannelMapper
 from ytpodcast.mapper.service.video_mapper import VideoMapper
 from ytpodcast.mapper.service.feed_item_mapper import FeedItemMapper
@@ -112,9 +114,17 @@ class DefaultContainer:
         rss_feed_response_mapper = RssFeedResponseMapper(app_config)
         self.injector.binder.bind(RssFeedResponseMapper, to=rss_feed_response_mapper)
 
+        yt_channel_response_mapper = ChannelResponseMapper()
+        self.injector.binder.bind(ChannelResponseMapper, to=yt_channel_response_mapper)
+
+        yt_video_response_mapper = VideoResponseMapper()
+        self.injector.binder.bind(VideoResponseMapper, to=yt_video_response_mapper)
+
         yt_api_client = YtApiClient(
             base_url=self.yt_api_base_url,
             api_key=self.yt_api_key,
+            channel_response_mapper=yt_channel_response_mapper,
+            video_response_mapper=yt_video_response_mapper,
         )
         self.injector.binder.bind(YtApiClient, to=yt_api_client)
 
