@@ -87,6 +87,7 @@ class FeedService:
     ) -> list[ChannelVideoResponse]:
         """Fetch paged videos until enough filtered items are collected."""
         collected: list[ChannelVideoResponse] = []
+        seen_video_ids: set[str] = set()
         page_token: str | None = None
 
         while len(collected) < requested_total:
@@ -102,7 +103,12 @@ class FeedService:
                 from_date,
                 to_date,
             )
-            collected.extend(page_filtered)
+            for video in page_filtered:
+                video_id: str = video.get_video_id()
+                if video_id in seen_video_ids:
+                    continue
+                seen_video_ids.add(video_id)
+                collected.append(video)
             if not page.get_next_page_token():
                 break
             page_token = page.get_next_page_token()
