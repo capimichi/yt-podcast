@@ -121,7 +121,7 @@ class FeedService:
 
     def _is_short_video(self, video_id: str) -> bool:
         """Return True when the video is a YouTube Short."""
-        max_shorts_seconds: int = 60
+        max_shorts_seconds: int = 240
         try:
             video_response = self.yt_api_client.fetch_video(video_id)
         except ValueError:
