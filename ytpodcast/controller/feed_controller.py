@@ -44,6 +44,7 @@ class FeedController:
         offset: int | None = Query(default=None, ge=0),
         from_date: datetime | None = Query(default=None, alias="fromDate"),
         to_date: datetime | None = Query(default=None, alias="toDate"),
+        include_shorts: bool = Query(default=False, alias="includeShorts"),
     ) -> Response:
         """Return a channel feed response in RSS XML."""
         feed: ChannelFeed = self.feed_service.get_channel_feed(
@@ -52,6 +53,7 @@ class FeedController:
             offset=offset,
             from_date=from_date,
             to_date=to_date,
+            include_shorts=include_shorts,
         )
         xml_body: str = self.feed_response_mapper.create_from_feed(feed)
         return Response(content=xml_body, media_type="application/rss+xml")

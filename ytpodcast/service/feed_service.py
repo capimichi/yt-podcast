@@ -39,6 +39,7 @@ class FeedService:
         offset: int | None = None,
         from_date: datetime | None = None,
         to_date: datetime | None = None,
+        include_shorts: bool = True,
     ) -> ChannelFeed:
         """Fetch channel metadata and recent videos for feed rendering."""
         channel_response: ChannelResponse = self.yt_api_client.fetch_channel(channel_id)
@@ -49,6 +50,7 @@ class FeedService:
             requested_total,
             from_date,
             to_date,
+            include_shorts,
         )
         sliced_responses: list[ChannelVideoResponse] = self._apply_paging(
             filtered_responses,
@@ -84,6 +86,7 @@ class FeedService:
         requested_total: int,
         from_date: datetime | None,
         to_date: datetime | None,
+        include_shorts: bool,
     ) -> list[ChannelVideoResponse]:
         """Fetch paged videos until enough filtered items are collected."""
         collected: list[ChannelVideoResponse] = []
@@ -107,12 +110,23 @@ class FeedService:
                 video_id: str = video.get_video_id()
                 if video_id in seen_video_ids:
                     continue
+                if not include_shorts and self._is_short_video(video_id):
+                    continue
                 seen_video_ids.add(video_id)
                 collected.append(video)
             if not page.get_next_page_token():
                 break
             page_token = page.get_next_page_token()
         return collected
+
+    def _is_short_video(self, video_id: str) -> bool:
+        """Return True when the video is a YouTube Short."""
+        max_shorts_seconds: int = 60
+        try:
+            video_response = self.yt_api_client.fetch_video(video_id)
+        except ValueError:
+            return False
+        return video_response.get_duration_seconds() <= max_shorts_seconds
 
     def _normalize_filter_date(self, value: datetime | None) -> datetime | None:
         """Normalize filter dates to UTC-aware values."""
