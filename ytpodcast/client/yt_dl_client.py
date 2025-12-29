@@ -69,7 +69,6 @@ class YtDlClient:
         download_dir_path.mkdir(parents=True, exist_ok=True)
         output_path: Path = download_dir_path / f"{video_id}.mp3"
         if output_path.exists():
-            raise ValueError(f"Output file {output_path} already exists.")
             return output_path
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_dir_path: Path = Path(temp_dir)
