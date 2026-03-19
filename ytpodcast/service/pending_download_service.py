@@ -48,7 +48,7 @@ class PendingDownloadService:
 
     def _process_pending_path(self, video_id: str, pending_path: Path) -> Path:
         """Materialize a single pending placeholder and replace it atomically."""
-        with TemporaryDirectory() as temp_dir:
+        with TemporaryDirectory(dir=self.download_dir_path) as temp_dir:
             temp_dir_path: Path = Path(temp_dir)
             temp_output_path: Path = temp_dir_path / pending_path.name
             downloaded_path: Path = self.video_service.materialize_audio_download(
