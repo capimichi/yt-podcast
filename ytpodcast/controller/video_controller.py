@@ -2,13 +2,14 @@
 
 from pathlib import Path
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import FileResponse
 from injector import inject
 
 from ytpodcast.mapper.controller.file_response_mapper import FileResponseMapper
 from ytpodcast.mapper.controller.get_video_response_mapper import GetVideoResponseMapper
 from ytpodcast.model.controller.get_video_response import GetVideoResponse
+from ytpodcast.service.video_service import DownloadNotReadyError
 from ytpodcast.service.video_service import VideoService
 
 
@@ -56,5 +57,16 @@ class VideoController:
 
     async def download_video(self, video_id: str) -> FileResponse:
         """Download a single audio file for a video."""
-        download_path: Path = self.video_service.download_audio(video_id)
+        try:
+            download_path: Path = self.video_service.get_download_audio_path(video_id)
+        except DownloadNotReadyError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={
+                    "code": "download_not_ready",
+                    "message": "Audio not ready yet.",
+                    "video_id": exc.get_video_id(),
+                },
+                headers={"Retry-After": "60"},
+            ) from exc
         return self.file_response_mapper.create_from_path(download_path)

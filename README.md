@@ -118,13 +118,41 @@ curl "http://localhost:8459/videos/dQw4w9WgXcQ"
 
 - **Metodo**: `GET`
 - **Path**: `/videos/{video_id}/download`
-- **Descrizione**: scarica il file audio del video.
-- **Risposta**: file binario (`FileResponse`) con `Content-Disposition: attachment; filename=...`.
+- **Descrizione**: restituisce il file audio se e' gia' pronto; in caso contrario crea o mantiene un placeholder a 0 byte e risponde che il download e' ancora in coda.
+- **Risposta 200**: file binario (`FileResponse`) con `Content-Disposition: attachment; filename=...`.
+- **Risposta 409**: JSON con `code=download_not_ready` e header `Retry-After: 60`.
 
 Esempio:
 ```bash
 curl -L "http://localhost:8459/videos/dQw4w9WgXcQ/download" -o audio.mp3
 ```
+
+Esempio risposta non pronta:
+```json
+{
+  "detail": {
+    "code": "download_not_ready",
+    "message": "Audio not ready yet.",
+    "video_id": "dQw4w9WgXcQ"
+  }
+}
+```
+
+## Comando batch download pending
+
+- Elabora tutti i placeholder audio a 0 byte presenti in `DOWNLOAD_DIR`.
+- Usa lock su filesystem per evitare download concorrenti dello stesso video.
+
+```bash
+python -m ytpodcast.commands.process_pending_downloads
+```
+
+Il worker scarica ogni file pending in una directory temporanea e sostituisce il placeholder solo a download completato.
+
+## Docker e aggiornamento yt-dlp
+
+- L'immagine avvia `cron` insieme all'API.
+- `yt-dlp` viene aggiornato automaticamente ogni ora tramite job schedulato nel container.
 
 ## Note
 

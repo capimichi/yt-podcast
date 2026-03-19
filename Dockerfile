@@ -6,6 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    cron \
     ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
@@ -15,8 +16,12 @@ RUN pip install --no-cache-dir yt-dlp
 
 COPY . /app
 
+RUN chmod +x /app/docker/entrypoint.sh /app/docker/update-yt-dlp.sh \
+    && chmod 0644 /app/docker/yt-dlp.cron \
+    && cp /app/docker/yt-dlp.cron /etc/cron.d/yt-dlp-update
+
 RUN mkdir -p /app/var/downloads /app/var/cache
 
 EXPOSE 8000
 
-CMD ["python", "-m", "ytpodcast.api"]
+CMD ["/app/docker/entrypoint.sh"]

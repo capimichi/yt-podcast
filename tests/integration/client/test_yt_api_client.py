@@ -6,6 +6,7 @@ import unittest
 
 from ytpodcast.client.yt_api_client import YtApiClient
 from ytpodcast.model.client.ytapi.channel_response import ChannelResponse
+from ytpodcast.model.client.ytapi.channel_videos_page_response import ChannelVideosPageResponse
 from ytpodcast.model.client.ytapi.video_response import VideoResponse
 from ytpodcast.container.default_container import DefaultContainer
 
@@ -43,3 +44,13 @@ class TestYtApiClient(unittest.TestCase):
         self.assertTrue(response.get_title())
         self.assertTrue(response.get_channel_id())
         self.assertIn(self.video_id, response.get_url())
+
+    def test_fetch_channel_videos_page(self) -> None:
+        """Fetch a page of uploaded channel videos."""
+        channel_response: ChannelResponse = self.client.fetch_channel(self.channel_handle)
+        response: ChannelVideosPageResponse = self.client.fetch_channel_videos_page(
+            channel_response.get_channel_id(),
+            max_results=5,
+        )
+        self.assertTrue(channel_response.get_uploads_playlist_id())
+        self.assertTrue(response.get_items())

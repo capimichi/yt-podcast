@@ -63,13 +63,29 @@ class YtDlClient:
             )
         return audio_formats
 
+    def get_download_dir(self) -> str:
+        """Return the configured download directory."""
+        return self.download_dir
+
     def download_audio(self, video_id: str, format_id: str) -> Path:
         """Download a single audio format for a video."""
-        download_dir_path: Path = Path(self.download_dir)
-        download_dir_path.mkdir(parents=True, exist_ok=True)
-        output_path: Path = download_dir_path / f"{video_id}.mp3"
-        if output_path.exists():
+        output_path: Path = self.resolve_download_path(video_id)
+        if output_path.exists() and output_path.stat().st_size > 0:
             return output_path
+        return self.download_audio_to_path(video_id, format_id, output_path)
+
+    def resolve_download_path(self, video_id: str) -> Path:
+        """Return the configured output path for a video download."""
+        return Path(self.download_dir) / f"{video_id}.mp3"
+
+    def download_audio_to_path(
+        self,
+        video_id: str,
+        format_id: str,
+        output_path: Path,
+    ) -> Path:
+        """Download a single audio format to the provided output path."""
+        output_path.parent.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_dir_path: Path = Path(temp_dir)
             temp_output_path: Path = temp_dir_path / f"{video_id}.%(ext)s"

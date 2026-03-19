@@ -22,6 +22,7 @@ from ytpodcast.manager.cache_manager import CacheManager
 from ytpodcast.mapper.service.channel_mapper import ChannelMapper
 from ytpodcast.mapper.service.video_mapper import VideoMapper
 from ytpodcast.mapper.service.feed_item_mapper import FeedItemMapper
+from ytpodcast.service.pending_download_service import PendingDownloadService
 from ytpodcast.service.channel_service import ChannelService
 from ytpodcast.service.video_service import VideoService
 from ytpodcast.helper.file_helper import FileHelper
@@ -35,11 +36,11 @@ T = TypeVar("T")
 class DefaultContainer:
     """Dependency container for the ytpodcast service."""
 
-    injector = None
-    instance = None
+    injector: Injector
+    instance: "DefaultContainer | None" = None
 
     @staticmethod
-    def get_instance():
+    def get_instance() -> "DefaultContainer":
         """Return the shared container instance."""
         if DefaultContainer.instance is None:
             DefaultContainer.instance = DefaultContainer()
@@ -116,7 +117,7 @@ class DefaultContainer:
 
         yt_api_client = YtApiClient(
             base_url=self.yt_api_base_url,
-            api_key=self.yt_api_key,
+            api_key=self.yt_api_key or "",
             channel_response_mapper=yt_channel_response_mapper,
             video_response_mapper=yt_video_response_mapper,
         )
@@ -128,6 +129,7 @@ class DefaultContainer:
             ytdl_executable_path=self.ytdl_executable_path,
             ffmpeg_executable_path=self.ffmpeg_executable_path,
         )
+        self.injector.binder.bind(YtDlClient, to=yt_dl_client)
 
         channel_service = ChannelService(yt_api_client, channel_mapper)
 
@@ -135,9 +137,18 @@ class DefaultContainer:
             yt_api_client,
             yt_dl_client,
             video_mapper,
+            file_helper,
         )
+        self.injector.binder.bind(VideoService, to=video_service)
 
         feed_service = FeedService(yt_api_client, channel_mapper, feed_item_mapper)
+
+        pending_download_service = PendingDownloadService(
+            video_service,
+            file_helper,
+            self.download_dir,
+        )
+        self.injector.binder.bind(PendingDownloadService, to=pending_download_service)
 
         channel_controller = ChannelController(
             channel_service,

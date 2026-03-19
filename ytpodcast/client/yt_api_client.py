@@ -35,7 +35,7 @@ class YtApiClient:
 
     def fetch_channel(self, identifier: str) -> ChannelResponse:
         """Fetch a channel payload from the YouTube API."""
-        channel_params: dict[str, str] = {}
+        channel_params: dict[str, Any] = {}
         if identifier.startswith("@"):
             channel_params["for_handle"] = identifier
         elif identifier.startswith("UC") and len(identifier) == 24:
@@ -43,11 +43,12 @@ class YtApiClient:
         else:
             channel_params["for_username"] = identifier
 
-        response: ChannelListResponse = self.client.channels.list(
-            parts="snippet",
+        channels_api: Any = self.client.channels
+        response: ChannelListResponse = channels_api.list(
+            parts="snippet,contentDetails",
             return_json=False,
             **channel_params,
-        )
+        )  # type: ignore[reportCallIssue]
 
         return self.channel_response_mapper.create_from_channel_list_response(
             response,
@@ -73,21 +74,26 @@ class YtApiClient:
         max_results: int = 20,
         page_token: str | None = None,
     ) -> ChannelVideosPageResponse:
-        """Fetch a page of channel videos for feed generation."""
-        response: Any = self.client.search.list(
-            part="snippet",
-            channel_id=channel_id,
-            order="date",
-            type="video",
+        """Fetch a page of channel videos from the channel uploads playlist."""
+        channel_response: ChannelResponse = self.fetch_channel(channel_id)
+        uploads_playlist_id: str | None = channel_response.get_uploads_playlist_id()
+        if uploads_playlist_id is None:
+            raise ValueError(f"Uploads playlist not found for channel '{channel_id}'.")
+
+        playlist_items_api: Any = self.client.playlistItems
+        response: Any = playlist_items_api.list(
+            parts="snippet",
+            playlist_id=uploads_playlist_id,
             max_results=max_results,
             page_token=page_token,
             return_json=False,
-        )
+        )  # type: ignore[reportCallIssue]
         items: list[Any] = response.items
         videos: list[ChannelVideoResponse] = []
         for item in items:
             snippet = item.snippet
-            video_id_value: str = item.id.videoId or ""
+            resource_id: Any = getattr(snippet, "resourceId", None)
+            video_id_value: str = getattr(resource_id, "videoId", "") or ""
             if not video_id_value:
                 continue
             published_at_value: datetime = self._normalize_published_at(

@@ -11,6 +11,7 @@ class ChannelResponse(BaseModel):
     description: str
     url: str
     image_url: str
+    uploads_playlist_id: str | None = None
 
     def get_channel_id(self) -> str:
         """Return the channel identifier."""
@@ -31,3 +32,7 @@ class ChannelResponse(BaseModel):
     def get_image_url(self) -> str:
         """Return the channel image URL."""
         return self.image_url
+
+    def get_uploads_playlist_id(self) -> str | None:
+        """Return the uploads playlist identifier."""
+        return self.uploads_playlist_id
