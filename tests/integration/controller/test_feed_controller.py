@@ -28,7 +28,7 @@ class TestFeedController(unittest.TestCase):
 
     def test_get_channel_feed_xml(self) -> None:
         """Fetch a channel feed in RSS XML format."""
-        response = self.client.get(f"/feeds/{self.channel_handle}/xml")
+        response = self.client.get(f"/channels/{self.channel_handle}/xml")
         self.assertEqual(response.status_code, 200)
         self.assertIn("application/rss+xml", response.headers.get("content-type", ""))
         self.assertIn("<rss", response.text)

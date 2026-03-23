@@ -9,4 +9,4 @@ services:
       YTDL_EXECUTABLE_PATH: yt-dlp
       YTDL_DEFAULT_FORMAT: bestaudio
     volumes:
-      - ./var:/app/var
+      - .:/app

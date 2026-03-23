@@ -47,10 +47,8 @@ class TestYtApiClient(unittest.TestCase):
 
     def test_fetch_channel_videos_page(self) -> None:
         """Fetch a page of uploaded channel videos."""
-        channel_response: ChannelResponse = self.client.fetch_channel(self.channel_handle)
         response: ChannelVideosPageResponse = self.client.fetch_channel_videos_page(
-            channel_response.get_channel_id(),
+            self.channel_handle,
             max_results=5,
         )
-        self.assertTrue(channel_response.get_uploads_playlist_id())
         self.assertTrue(response.get_items())

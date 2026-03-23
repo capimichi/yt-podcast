@@ -28,13 +28,13 @@ class FeedController:
         self.feed_service = feed_service
         self.feed_response_mapper = feed_response_mapper
         self.cache_manager = cache_manager
-        self.router = APIRouter(prefix="/feeds", tags=["Feeds"])
+        self.router = APIRouter(prefix="/channels", tags=["Feeds"])
         self._register_routes()
 
     def _register_routes(self) -> None:
         """Register FastAPI routes for feeds."""
         self.router.add_api_route(
-            "/{channel_id}/xml",
+            "/{identifier}/xml",
             self.get_feed_xml,
             methods=["GET"],
             summary="Fetch channel RSS feed as XML",
@@ -42,7 +42,7 @@ class FeedController:
 
     async def get_feed_xml(
         self,
-        channel_id: str,
+        identifier: str,
         limit: int | None = Query(default=None, ge=1),
         offset: int | None = Query(default=None, ge=0),
         from_date: datetime | None = Query(default=None, alias="fromDate"),
@@ -52,7 +52,7 @@ class FeedController:
         """Return a channel feed response in RSS XML."""
         cache_key: str = self.cache_manager.create_cache_key(
             "feed_xml",
-            channel_id,
+            identifier,
             limit,
             offset,
             from_date,
@@ -64,7 +64,7 @@ class FeedController:
             return Response(content=cached_value, media_type="application/rss+xml")
 
         feed: ChannelFeed = self.feed_service.get_channel_feed(
-            channel_id,
+            identifier,
             limit=limit,
             offset=offset,
             from_date=from_date,

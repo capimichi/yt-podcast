@@ -73,9 +73,12 @@ curl "http://localhost:8459/channels/UC_x5XG1OV2P6uZZ5FSM9Ttw"
 ### 4) Feed RSS XML del canale
 
 - **Metodo**: `GET`
-- **Path**: `/feeds/{channel_id}/xml`
+- **Path**: `/channels/{identifier}/xml`
 - **Descrizione**: genera un feed RSS 2.0 con enclosure audio (`/videos/{video_id}/download`).
 - **Content-Type**: `application/rss+xml`
+
+Path param:
+- `identifier`: ID canale (es. `UC...`) o handle supportato dalla logica del servizio.
 
 Query params opzionali:
 - `limit` (int, `>=1`): numero massimo di item.
@@ -86,7 +89,7 @@ Query params opzionali:
 
 Esempio:
 ```bash
-curl "http://localhost:8459/feeds/UC_x5XG1OV2P6uZZ5FSM9Ttw/xml?limit=20&includeShorts=false"
+curl "http://localhost:8459/channels/UC_x5XG1OV2P6uZZ5FSM9Ttw/xml?limit=20&includeShorts=false"
 ```
 
 ### 5) Dettagli video

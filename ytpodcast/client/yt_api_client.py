@@ -70,15 +70,15 @@ class YtApiClient:
 
     def fetch_channel_videos_page(
         self,
-        channel_id: str,
+        identifier: str,
         max_results: int = 20,
         page_token: str | None = None,
     ) -> ChannelVideosPageResponse:
         """Fetch a page of channel videos from the channel uploads playlist."""
-        channel_response: ChannelResponse = self.fetch_channel(channel_id)
+        channel_response: ChannelResponse = self.fetch_channel(identifier)
         uploads_playlist_id: str | None = channel_response.get_uploads_playlist_id()
         if uploads_playlist_id is None:
-            raise ValueError(f"Uploads playlist not found for channel '{channel_id}'.")
+            raise ValueError(f"Uploads playlist not found for channel '{identifier}'.")
 
         playlist_items_api: Any = self.client.playlistItems
         response: Any = playlist_items_api.list(

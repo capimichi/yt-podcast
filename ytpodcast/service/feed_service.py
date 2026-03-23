@@ -34,7 +34,7 @@ class FeedService:
 
     def get_channel_feed(
         self,
-        channel_id: str,
+        identifier: str,
         limit: int | None = None,
         offset: int | None = None,
         from_date: datetime | None = None,
@@ -42,7 +42,7 @@ class FeedService:
         include_shorts: bool = True,
     ) -> ChannelFeed:
         """Fetch channel metadata and recent videos for feed rendering."""
-        channel_response: ChannelResponse = self.yt_api_client.fetch_channel(channel_id)
+        channel_response: ChannelResponse = self.yt_api_client.fetch_channel(identifier)
         channel: Channel = self.channel_mapper.create_from_channel_response(channel_response)
         requested_total: int = self._resolve_requested_total(limit, offset)
         filtered_responses: list[ChannelVideoResponse] = self._collect_filtered_videos(
@@ -82,7 +82,7 @@ class FeedService:
 
     def _collect_filtered_videos(
         self,
-        channel_id: str,
+        identifier: str,
         requested_total: int,
         from_date: datetime | None,
         to_date: datetime | None,
@@ -97,7 +97,7 @@ class FeedService:
             remaining: int = requested_total - len(collected)
             page_size: int = min(max(remaining, 1), 50)
             page: ChannelVideosPageResponse = self.yt_api_client.fetch_channel_videos_page(
-                channel_id,
+                identifier,
                 max_results=page_size,
                 page_token=page_token,
             )
