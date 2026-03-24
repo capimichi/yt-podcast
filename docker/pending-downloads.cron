@@ -1,1 +1,2 @@
-* * * * * root cd /app && python -m ytpodcast.cli download:process-pending >> /app/var/log/pending-downloads.log 2>&1
+PATH=/usr/local/bin:/usr/bin:/bin
+* * * * * root cd /app && /usr/local/bin/python -m ytpodcast.cli download:process-pending >> /app/var/log/pending-downloads.log 2>&1

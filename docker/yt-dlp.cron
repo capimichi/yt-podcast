@@ -1,1 +1,2 @@
+PATH=/usr/local/bin:/usr/bin:/bin
 0 * * * * root /app/docker/update-yt-dlp.sh >> /app/var/log/yt-dlp-update.log 2>&1
