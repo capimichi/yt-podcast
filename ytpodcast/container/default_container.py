@@ -22,6 +22,7 @@ from ytpodcast.manager.cache_manager import CacheManager
 from ytpodcast.mapper.service.channel_mapper import ChannelMapper
 from ytpodcast.mapper.service.video_mapper import VideoMapper
 from ytpodcast.mapper.service.feed_item_mapper import FeedItemMapper
+from ytpodcast.service.download_cleanup_service import DownloadCleanupService
 from ytpodcast.service.pending_download_service import PendingDownloadService
 from ytpodcast.service.channel_service import ChannelService
 from ytpodcast.service.video_service import VideoService
@@ -78,6 +79,9 @@ class DefaultContainer:
         self.cache_dir = os.environ.get("CACHE_DIR", os.path.join("var", "cache"))
         self.ytdl_executable_path = os.environ.get("YTDL_EXECUTABLE_PATH", "yt-dlp")
         self.ffmpeg_executable_path = os.environ.get("FFMPEG_EXECUTABLE_PATH", "ffmpeg")
+        self.download_retention_days = int(
+            os.environ.get("DOWNLOAD_RETENTION_DAYS", "30")
+        )
 
     def _init_bindings(self) -> None:
         """Bind configured services, mappers, and clients."""
@@ -149,6 +153,13 @@ class DefaultContainer:
             self.download_dir,
         )
         self.injector.binder.bind(PendingDownloadService, to=pending_download_service)
+
+        download_cleanup_service = DownloadCleanupService(
+            file_helper,
+            self.download_dir,
+            self.download_retention_days,
+        )
+        self.injector.binder.bind(DownloadCleanupService, to=download_cleanup_service)
 
         channel_controller = ChannelController(
             channel_service,

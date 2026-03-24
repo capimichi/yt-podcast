@@ -1,5 +1,7 @@
 """Module for ytpodcast.helper.file_helper."""
 
+from datetime import datetime
+from datetime import timezone
 import mimetypes
 import os
 from pathlib import Path
@@ -49,6 +51,29 @@ class FileHelper:
             for path in sorted(directory_path.glob(pattern))
             if path.is_file() and self.get_file_size(path) == 0
         ]
+
+    def list_non_empty_files(
+        self,
+        directory_path: Path,
+        pattern: str = "*.mp3",
+    ) -> list[Path]:
+        """Return non-empty files matching the provided pattern."""
+        if not directory_path.exists():
+            return []
+        return [
+            path
+            for path in sorted(directory_path.glob(pattern))
+            if path.is_file() and self.get_file_size(path) > 0
+        ]
+
+    def get_last_modified_at(self, file_path: Path) -> datetime:
+        """Return the UTC last-modified timestamp for a file."""
+        return datetime.fromtimestamp(file_path.stat().st_mtime, tz=timezone.utc)
+
+    def delete_file(self, file_path: Path) -> None:
+        """Delete a file when it exists."""
+        if file_path.exists():
+            file_path.unlink()
 
     def replace_file_atomically(self, source_path: Path, destination_path: Path) -> None:
         """Atomically replace a destination file with a source file."""

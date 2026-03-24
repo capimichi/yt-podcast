@@ -17,9 +17,10 @@ RUN pip install --no-cache-dir yt-dlp
 COPY . /app
 
 RUN chmod +x /app/docker/entrypoint.sh /app/docker/update-yt-dlp.sh \
-    && chmod 0644 /app/docker/yt-dlp.cron /app/docker/pending-downloads.cron \
+    && chmod 0644 /app/docker/yt-dlp.cron /app/docker/pending-downloads.cron /app/docker/download-cleanup.cron \
     && cp /app/docker/yt-dlp.cron /etc/cron.d/yt-dlp-update \
-    && cp /app/docker/pending-downloads.cron /etc/cron.d/pending-downloads
+    && cp /app/docker/pending-downloads.cron /etc/cron.d/pending-downloads \
+    && cp /app/docker/download-cleanup.cron /etc/cron.d/download-cleanup
 
 RUN mkdir -p /app/var/downloads /app/var/cache /app/var/log
 

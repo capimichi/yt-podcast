@@ -153,12 +153,23 @@ python -m ytpodcast.cli download:process-pending
 
 Il worker scarica ogni file pending in una directory temporanea e sostituisce il placeholder solo a download completato.
 
+## Comando cleanup download
+
+- Elimina i file audio in `DOWNLOAD_DIR` piu' vecchi della retention configurata.
+- La retention e' controllata da `DOWNLOAD_RETENTION_DAYS` e vale `30` giorni di default.
+- Comando CLI: `download:cleanup`.
+
+```bash
+python -m ytpodcast.cli download:cleanup
+```
+
 ## Docker e aggiornamento yt-dlp
 
 - L'immagine avvia `cron` insieme all'API.
 - I download pending vengono processati automaticamente ogni minuto con `python -m ytpodcast.cli download:process-pending`.
+- Il cleanup dei download viene eseguito automaticamente ogni giorno alle `03:00` con `python -m ytpodcast.cli download:cleanup`.
 - `yt-dlp` viene aggiornato automaticamente ogni ora tramite job schedulato nel container.
-- I log cron sono scritti in `var/log/pending-downloads.log` e `var/log/yt-dlp-update.log`.
+- I log cron sono scritti in `var/log/pending-downloads.log`, `var/log/download-cleanup.log` e `var/log/yt-dlp-update.log`.
 
 ## Note
 
