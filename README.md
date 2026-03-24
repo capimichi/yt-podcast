@@ -160,5 +160,4 @@ Il worker scarica ogni file pending in una directory temporanea e sostituisce il
 ## Note
 
 - L'API usa CORS permissivo (`*`).
-- Le risposte del feed XML sono cache-ate lato server (TTL: 3 ore).
 - Per test di integrazione esistono i test sotto `tests/integration/` (richiedono configurazione variabili ambiente, in particolare `YT_API_KEY`).

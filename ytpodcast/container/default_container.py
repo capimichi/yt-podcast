@@ -18,7 +18,6 @@ from ytpodcast.mapper.controller.rss_feed_response_mapper import RssFeedResponse
 from ytpodcast.mapper.controller.file_response_mapper import FileResponseMapper
 from ytpodcast.mapper.client.ytapi.channel_response_mapper import ChannelResponseMapper
 from ytpodcast.mapper.client.ytapi.video_response_mapper import VideoResponseMapper
-from ytpodcast.manager.cache_manager import CacheManager
 from ytpodcast.mapper.service.channel_mapper import ChannelMapper
 from ytpodcast.mapper.service.video_mapper import VideoMapper
 from ytpodcast.mapper.service.feed_item_mapper import FeedItemMapper
@@ -109,8 +108,6 @@ class DefaultContainer:
 
         rss_feed_response_mapper = RssFeedResponseMapper(app_config)
 
-        cache_manager = CacheManager(cache_dir=self.cache_dir)
-
         yt_channel_response_mapper = ChannelResponseMapper()
 
         yt_video_response_mapper = VideoResponseMapper()
@@ -163,5 +160,5 @@ class DefaultContainer:
         )
         self.injector.binder.bind(VideoController, to=video_controller)
 
-        feed_controller = FeedController(feed_service, rss_feed_response_mapper, cache_manager)
+        feed_controller = FeedController(feed_service, rss_feed_response_mapper)
         self.injector.binder.bind(FeedController, to=feed_controller)
