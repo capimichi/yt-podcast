@@ -2,6 +2,8 @@
 
 import fcntl
 from contextlib import contextmanager
+from datetime import datetime
+from datetime import timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Iterator
@@ -38,6 +40,7 @@ class PendingDownloadService:
             video_id: str = pending_path.stem
             with self._acquire_lock(video_id) as is_locked:
                 if not is_locked:
+                    self._log(f"Skipping '{video_id}' because another worker holds the lock.")
                     continue
                 if self.file_helper.get_file_size(pending_path) != 0:
                     continue
@@ -48,6 +51,7 @@ class PendingDownloadService:
 
     def _process_pending_path(self, video_id: str, pending_path: Path) -> Path:
         """Materialize a single pending placeholder and replace it atomically."""
+        self._log(f"Starting download for video '{video_id}'.")
         with TemporaryDirectory(dir=self.download_dir_path) as temp_dir:
             temp_dir_path: Path = Path(temp_dir)
             temp_output_path: Path = temp_dir_path / pending_path.name
@@ -60,7 +64,13 @@ class PendingDownloadService:
                     f"Downloaded file for '{video_id}' is missing or still empty."
                 )
             self.file_helper.replace_file_atomically(downloaded_path, pending_path)
+        self._log(f"Completed download for video '{video_id}'.")
         return pending_path
+
+    def _log(self, message: str) -> None:
+        """Write a timestamped log message for the download worker."""
+        timestamp: str = datetime.now(timezone.utc).isoformat()
+        print(f"[{timestamp}] {message}")
 
     @contextmanager
     def _acquire_lock(self, video_id: str) -> Iterator[bool]:

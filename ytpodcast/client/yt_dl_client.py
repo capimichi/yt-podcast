@@ -1,5 +1,7 @@
 """Module for ytpodcast.client.yt_dl_client."""
 
+from datetime import datetime
+from datetime import timezone
 import json
 import subprocess
 import tempfile
@@ -89,27 +91,32 @@ class YtDlClient:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_dir_path: Path = Path(temp_dir)
             temp_output_path: Path = temp_dir_path / f"{video_id}.%(ext)s"
+            self._log(
+                f"Running yt-dlp for video '{video_id}' with format '{format_id}'."
+            )
             command: list[str] = [
                 self.ytdl_executable_path,
                 "--no-playlist",
-                "--quiet",
                 "--no-warnings",
+                "--newline",
                 "-f",
                 format_id,
                 "-o",
                 str(temp_output_path),
                 self._build_video_url(video_id),
             ]
-            self._run_command(command)
+            self._run_logged_command(command)
             downloaded_files: list[Path] = [
                 path for path in temp_dir_path.iterdir() if path.is_file()
             ]
             if not downloaded_files:
                 raise ValueError("Download completed but no output file was found.")
             source_path: Path = downloaded_files[0]
+            self._log(f"Converting downloaded file for video '{video_id}' to MP3.")
             self._convert_to_mp3(source_path, output_path)
         if not output_path.exists():
             raise ValueError("MP3 conversion completed but no output file was found.")
+        self._log(f"Stored final MP3 for video '{video_id}' at '{output_path}'.")
         return output_path
 
     def _extract_info(self, video_id: str) -> dict[str, Any]:
@@ -138,6 +145,10 @@ class YtDlClient:
         )
         return result.stdout
 
+    def _run_logged_command(self, command: list[str]) -> None:
+        """Run a command and stream its output to the active process logs."""
+        subprocess.run(command, check=True)
+
     def _convert_to_mp3(self, source_path: Path, output_path: Path) -> None:
         """Convert a downloaded audio file to MP3."""
         command: list[str] = [
@@ -147,4 +158,9 @@ class YtDlClient:
             str(source_path),
             str(output_path),
         ]
-        self._run_command(command)
+        self._run_logged_command(command)
+
+    def _log(self, message: str) -> None:
+        """Write a timestamped log message for yt-dlp operations."""
+        timestamp: str = datetime.now(timezone.utc).isoformat()
+        print(f"[{timestamp}] {message}")

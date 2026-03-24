@@ -145,9 +145,10 @@ Esempio risposta non pronta:
 
 - Elabora tutti i placeholder audio a 0 byte presenti in `DOWNLOAD_DIR`.
 - Usa lock su filesystem per evitare download concorrenti dello stesso video.
+- Comando CLI: `download:process-pending`.
 
 ```bash
-python -m ytpodcast.commands.process_pending_downloads
+python -m ytpodcast.cli download:process-pending
 ```
 
 Il worker scarica ogni file pending in una directory temporanea e sostituisce il placeholder solo a download completato.
@@ -155,9 +156,12 @@ Il worker scarica ogni file pending in una directory temporanea e sostituisce il
 ## Docker e aggiornamento yt-dlp
 
 - L'immagine avvia `cron` insieme all'API.
+- I download pending vengono processati automaticamente ogni minuto con `python -m ytpodcast.cli download:process-pending`.
 - `yt-dlp` viene aggiornato automaticamente ogni ora tramite job schedulato nel container.
+- I log cron sono scritti in `var/log/pending-downloads.log` e `var/log/yt-dlp-update.log`.
 
 ## Note
 
 - L'API usa CORS permissivo (`*`).
+- Le risposte del feed XML sono cache-ate lato server (TTL: 3 ore).
 - Per test di integrazione esistono i test sotto `tests/integration/` (richiedono configurazione variabili ambiente, in particolare `YT_API_KEY`).

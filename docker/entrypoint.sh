@@ -1,8 +1,9 @@
 #!/bin/sh
 set -eu
 
-mkdir -p /app/var/downloads /app/var/cache /var/log
-touch /var/log/yt-dlp-update.log
+mkdir -p /app/var/downloads /app/var/cache /app/var/log
+touch /app/var/log/yt-dlp-update.log
+touch /app/var/log/pending-downloads.log
 
 cron
 
