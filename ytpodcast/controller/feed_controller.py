@@ -72,5 +72,5 @@ class FeedController:
             include_shorts=include_shorts,
         )
         xml_body: str = self.feed_response_mapper.create_from_feed(feed)
-        self.cache_manager.set(cache_key, xml_body, ttl_seconds=10800)
+        self.cache_manager.set(cache_key, xml_body, ttl_seconds=43200)
         return Response(content=xml_body, media_type="application/rss+xml")
